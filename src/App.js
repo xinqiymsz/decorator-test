@@ -15,10 +15,31 @@ import ReactDOM from 'react-dom';
 
 // 情景二 页面鉴权
 
-import AuthPage from './two';
+// import AuthPage from './three';
+
+
+// class App extends React.Component {
+//   componentWillMount() {
+//       // 获取业务数据
+//   }
+//   render() {
+//     return <div>业务页面</div>;
+      
+//   }
+// }
+
+// export default AuthPage(App);
+
+ // 情景三
+import Performance from './three';
 
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+}
   componentWillMount() {
       // 获取业务数据
   }
@@ -28,5 +49,4 @@ class App extends React.Component {
   }
 }
 
-export default AuthPage(App);
-
+export default Performance(App);

@@ -9,7 +9,7 @@ const AuthPage = WrappedComponent => class extends React.Component {
         }
         componentWillMount() {
             // 权限获取接口,在此模拟promise
-            new Promise(resolve => resolve(0)).then((res) => {
+            new Promise(resolve => resolve(1)).then((res) => {
                 // success
                 this.setState({
                     permission: res,
@@ -21,6 +21,7 @@ const AuthPage = WrappedComponent => class extends React.Component {
             if (this.state.permission) {// 非0显示特殊页面
                 return <div>特殊页面</div>;
             }
+            
             return <WrappedComponent {...this.props} />;
         }
     }

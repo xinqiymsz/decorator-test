@@ -1,10 +1,10 @@
-# 前言 
+#前言 
 >之前开发项目写过一些装饰器觉得很不错，比如全局loading的应用，还有一个页面上多种弹窗造成页面的state过于繁重，维护很困难，因此抽离出各种公共组件便于维护，代码也会缩短很多，因此写篇文章深入的记录一下
 
 ## 一、什么是高阶组件 目的是什么
 >官方解释是：一个传入一个组件，返回另一个组件的函数，其概念与高阶函数的将函数作为参数传入类似。
 
-##### 使用目的
+#####使用目的
 - 将高度相似的部分抽离出来，比如一个常用组件，比如一个弹窗，可能有不同颜色的弹窗，或者只是某些小的地方不同，这样抽离抽离出来便于前端代码的维护
 - 生命周期 state 的捕获 渲染劫持
 ## 二、使用方法
@@ -134,7 +134,7 @@ class App extends React.Component {
 }
 export default App;
 ```
-![反向继承控制了传入页面的state以及方法](https://user-gold-cdn.xitu.io/2019/8/29/16cdd723082acdd7?w=252&h=86&f=png&s=876)
+![反向继承控制了传入页面的state以及方法](https://upload-images.jianshu.io/upload_images/10044574-fab7038d0883db56.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ## 3、高阶组件的应用
 ##### 1.页面复用(工厂模式) 
   >比如一个公共页面 只是某些字段发生改变，可以将这个公共页面设计成工厂`(高阶组件)`，外部传入一个json配置给这个装饰器的参数，下面举例一个简单的🌰
@@ -178,7 +178,7 @@ export default CommonPage;
 
 ```
 
-![可以根据传入的json去生成对应的页面](https://user-gold-cdn.xitu.io/2019/8/29/16cdd723081cd06c?w=708&h=386&f=png&s=37284)
+![可以根据传入的json去生成对应的页面](https://upload-images.jianshu.io/upload_images/10044574-16b3470789bfcb59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 ##### 2.页面的选择渲染
@@ -231,7 +231,60 @@ const AuthPage = WrappedComponent => class extends React.Component {
 
 export default AuthPage;
 ```
-##### 3.对组件进行二次封装
+##### 3.页面的性能指标监控
+>对某些页面进行时间监控 利用高阶组件防止重复代码
+ ```
+import React from 'react';
+
+function Performance(WrappedComponent) {
+    return class extends WrappedComponent {
+        constructor(props) {
+            super(props);
+            this.start = 0;
+            this.end = 0;
+        }
+        componentWillMount() {
+            super.componentWillMount && super.componentWillMount();
+            this.start = Date.now();
+        }
+        componentDidMount() {
+            super.componentDidMount && super.componentDidMount();
+            this.end = Date.now();
+            console.log(`组件渲染时间为 ${this.end - this.start} ms`);
+        }
+        render() {
+            return super.render();
+        }
+    };
+}
+
+export default Performance;
+```
+```
+import Performance from './three';
+
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+}
+  componentWillMount() {
+      // 获取业务数据
+  }
+  render() {
+    return <div>业务页面</div>;
+      
+  }
+}
+
+export default Performance(App);
+```
+![打印出组件渲染时间](https://upload-images.jianshu.io/upload_images/10044574-8cd9b070c5e43f05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+##### 4.对组件进行二次封装
 >点击按钮希望出现二次确认,包一层promise 请求未回来的时候显示loading状态防止二次请求
 
 ```

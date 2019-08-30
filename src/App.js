@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom';
 
 // 情景二 页面鉴权
 
-// import AuthPage from './three';
+// import AuthPage from './two';
 
 
 // class App extends React.Component {

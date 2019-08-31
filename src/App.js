@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import './App.css'
 // 情景一  页面的复用
 // import one from './one';
 
@@ -30,23 +30,58 @@ import ReactDOM from 'react-dom';
 
 // export default AuthPage(App);
 
- // 情景三
-import Performance from './three';
+//  // 情景三
+// import Performance from './three';
 
+
+// class App extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//     }
+// }
+//   componentWillMount() {
+//       // 获取业务数据
+//   }
+//   render() {
+//     return <div>业务页面</div>;
+      
+//   }
+// }
+
+// export default Performance(App);
+
+// 情景四（组件再次封装）
+import Button from './Button';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false
     }
-}
+  }
   componentWillMount() {
       // 获取业务数据
   }
+
+  onClick = () => {
+    // 模拟一个接口
+    return new Promise(resolve => { 
+
+      setTimeout(() => {
+        resolve(4);
+      }, 4000);
+    }).then((res) => {
+       console.log(res, '业务代码');
+    });
+    
+  }
+
   render() {
-    return <div>业务页面</div>;
+    return <Button type="primary"  onClick={this.onClick}>请求</Button>;
       
   }
 }
 
-export default Performance(App);
+export default App;

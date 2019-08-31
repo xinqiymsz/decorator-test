@@ -1,4 +1,4 @@
 import { Button } from 'antd';
-import lala from './lala';
+import ButtonWrapper from './ButtonWrapper';
 
-export default lala(Button);
+export default ButtonWrapper(Button);

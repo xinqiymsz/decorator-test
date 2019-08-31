@@ -134,7 +134,7 @@ class App extends React.Component {
 }
 export default App;
 ```
-![反向继承控制了传入页面的state以及方法](https://upload-images.jianshu.io/upload_images/10044574-fab7038d0883db56.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![反向继承控制了传入页面的state以及方法](https://user-gold-cdn.xitu.io/2019/8/29/16cdd723082acdd7?w=252&h=86&f=png&s=876)
 ## 3、高阶组件的应用
 ##### 1.页面复用(工厂模式) 
   >比如一个公共页面 只是某些字段发生改变，可以将这个公共页面设计成工厂`(高阶组件)`，外部传入一个json配置给这个装饰器的参数，下面举例一个简单的🌰
@@ -178,7 +178,7 @@ export default CommonPage;
 
 ```
 
-![可以根据传入的json去生成对应的页面](https://upload-images.jianshu.io/upload_images/10044574-16b3470789bfcb59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![可以根据传入的json去生成对应的页面](https://user-gold-cdn.xitu.io/2019/8/29/16cdd723081cd06c?w=708&h=386&f=png&s=37284)
 
 
 ##### 2.页面的选择渲染
@@ -281,72 +281,85 @@ class App extends React.Component {
 
 export default Performance(App);
 ```
-![打印出组件渲染时间](https://upload-images.jianshu.io/upload_images/10044574-8cd9b070c5e43f05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![打印出组件渲染时间](https://user-gold-cdn.xitu.io/2019/8/30/16ce1ab748791650?w=360&h=56&f=png&s=1904)
 
 
 ##### 4.对组件进行二次封装
->点击按钮希望出现二次确认,包一层promise 请求未回来的时候显示loading状态防止二次请求
+>点击按钮希望请求未回来的时候显示loading状态防止二次请求
 
 ```
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Modal } from "antd';
+import Button from './Button';
 
-export default function (WrappedComponent) {
-  class Confirm extends Component {
-    static displayName = 'Confirm';
-
-    static propTypes = {
-      data: PropTypes.any, 
-      confirm: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.object,
-      ]),
-      disabled: PropTypes.bool,
-      onClick: PropTypes.func,
-    }
-
-    onConfirm = (e) => {
-      const { data, onClick } = this.props;
-      if (onClick) {
-        if (data !== undefined) {
-          setTimeout(onClick(data, e), 0);
-        } else {
-          setTimeout(onClick(e), 0);
-        }
-      }
-    }
-
-    onClick = (e) => {
-      const { confirm, disabled } = this.props;
-      if (!disabled) {
-        if (confirm) {
-          // onOk 如果有一个参数，confirm 会传递 close 回调，不会自动关闭窗口
-          const options = typeof confirm === 'string' ? { title: confirm } : confirm;
-          Modal.confirm({ ...options, onOk: () => this.onConfirm(e) });
-        } else {
-          this.onConfirm(e);
-        }
-      }
-    }
-
-    render() {
-      const props = without(this.props, ['data', 'confirm']);
-      return (
-        <WrappedComponent {...props} onClick={this.onClick} />
-      );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false
     }
   }
-  hoi(Confirm, WrappedComponent);
-  return Confirm;
+  componentWillMount() {
+      // 获取业务数据
+  }
+
+  onClick = () => {
+    // 模拟一个接口
+    return new Promise(resolve => { 
+
+      setTimeout(() => {
+        resolve(4);
+      }, 4000);
+    }).then((res) => {
+       console.log(res, '业务代码');
+    });
+    
+  }
+
+  render() {
+    return <Button type="primary"  onClick={this.onClick}>请求</Button>;
+      
+  }
 }
+
+export default App;
 ```
 ```
 
-// 封装的组件
-import { Button } from 'bach-antd';
-import confirm from './confirm';
+// 高阶组件ButtonWrapper
+const Button = WrappedComponent => class extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          loading: false
+          
+        };
+    }
+    componentWillMount() {
+    }
 
-export default confirm(Button);
+    isPromise = (obj) => {
+      return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+    }
 
+    handleClick = () => {
+      this.setState({ loading: true });
+      
+      this.props.onClick().then((res) => {
+        this.setState({ loading: false });
+      });
+
+    }
+
+    render() {  
+      return <WrappedComponent {...this.props} loading={this.state.loading} onClick={this.handleClick}/>;
+    }
+}
+
+
+export default Button;
+```
+```
+import { Button } from 'antd';
+import ButtonWrapper from './ButtonWrapper';
+
+export default ButtonWrapperewButton(Button);
 ```

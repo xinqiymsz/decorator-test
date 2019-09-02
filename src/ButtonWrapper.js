@@ -11,17 +11,17 @@ const Button = WrappedComponent => class extends React.Component {
     componentWillMount() {
     }
 
-    isPromise = (obj) => {
-      return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
-    }
-
     handleClick = () => {
-      this.setState({ loading: true });
-      
-      this.props.onClick().then((res) => {
+      // 只有return一个promise才会加载loading状态，否则正常执行，因为判断是否有then必须还要执行一遍onclick，所以暂时只能加try catch
+      try {
+        this.setState({ loading: true });
+        this.props.onClick().then((res) => {
+          this.setState({ loading: false });
+        });
+      }
+       catch(e) {
         this.setState({ loading: false });
-      });
-
+      }
     }
 
     render() {  
